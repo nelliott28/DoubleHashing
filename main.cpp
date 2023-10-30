@@ -1,12 +1,104 @@
 #include <iostream>
+#include <random>
 
 using namespace std;
 
-string Hash(string key){
+//Linked List Structure
+struct Node{
+    string data;
+    Node *node;
+};
+class linkedList{
+    Node* head;
+
+    public:
+        linkedList(){
+            head = NULL;
+        }
+        void insert(string val){
+            Node* newNode = new Node;
+            newNode->data = val;
+            newNode->node = NULL;
+
+            if (head == NULL){
+                head = newNode;
+            }
+            else{
+                newNode->node = head;
+                head = newNode;
+            }
+        }
+        void display(){
+            Node* tempHead = head;
+            while(tempHead != NULL){
+                cout << tempHead->data << endl;
+                tempHead = tempHead->node;
+            }
+        }
+        bool search(string n){
+            Node* tempHead = head;
+            bool isFound = false;
+
+            while(tempHead != NULL){
+                if (tempHead->data == n){
+                    isFound = true;
+                    break;
+                }
+                tempHead = tempHead->node;
+            }
+
+            return isFound;
+        }
+        void erase(string val){
+            if (head->data == val){
+                delete head;
+                head = head->node;
+                return;
+            }
+            else if (head->node == NULL){
+                if (head->data == val){
+                    delete head;
+                    head = NULL;
+                    return;
+                }
+
+                cout << "Couldn't find data." << endl;
+            }
+            else{
+                Node* temp = head;
+                while(temp->node != NULL){
+                    if (temp->node->data == val){
+                        Node* tempPtr = temp->node->node;
+                        delete temp->node;
+                        temp->node = tempPtr;
+                        return;
+                    }
+                    temp = temp->node;
+                }
+            }
+        }
+        linkedList merge(linkedList B){
+            linkedList tempList;
+            Node* tempA = head; Node* tempB = B.head;
+            while (tempB != NULL){
+                tempList.insert(tempB->data);
+                tempB = tempB->node;
+            }
+            while (tempA != NULL){
+                tempList.insert(tempA->data);
+                tempA = tempA->node;
+            }
+            *this = tempList;
+            return *this;
+        }
+};
+
+//HASH FUNC.
+string DoubleHash(string key, bool isDHash){
     //MAIN VARIABLES
     string hashVal; //Final Hash Value Variable
     // !!! NOTE: 32-Bit MIN. REQUIRED !!! //
-    const int BIT_HASH = 256; //Number of bits for hash output (CHANGE THIS DEPENDING ON DESIRED BIT OUTPUT) 
+    const int BIT_HASH = 64; //Number of bits for hash output (CHANGE THIS DEPENDING ON DESIRED BIT OUTPUT) 
     int digitLength = BIT_HASH / 4; //Convert to num of characters in hash
 
     //SEED VALUE - Helps with creating large numbers
@@ -40,14 +132,45 @@ string Hash(string key){
     }
     //END HASH ALGORITHM
 
+    //Check for Double Hash
+    if (isDHash == true){
+        return DoubleHash(key + hashVal, false);
+    }
+
     return hashVal;
 }
 
 int main(){
-    
-    string sample = ""; //MAX 32 CHARACTERS
-    cout << "ORIGINAL: " << sample << endl;
-    cout << "HASH: " << Hash(sample) << endl;
+
+    linkedList hashTable[100];
+    string strArray[20] = {
+        "Hello123",
+        "World456",
+        "Random789",
+        "CPlusPlus",
+        "Hardcoded1",
+        "Example2",
+        "OpenAI123",
+        "Array456",
+        "Programming",
+        "RandomString",
+        "Demo678",
+        "GPT-3.5",
+        "LanguageModel",
+        "Coding101",
+        "StringArray",
+        "Generate987",
+        "ThisIsFun",
+        "LearningC++",
+        "ArrayOfStrings",
+        "StackOverflow"
+    };
+
+    for (int i = 0; i < sizeof(strArray) / sizeof(strArray[0]); i++){
+        hashTable->insert(DoubleHash(strArray[i], true));
+    }
+    cout << "----- HASH TABLE -----" << endl;
+    hashTable->display();
 
     return 0;
 }
