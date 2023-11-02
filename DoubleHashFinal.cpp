@@ -1,4 +1,5 @@
 #include<iostream>
+#inlcude<string>
 #include<list>
 
 using namespace std;
